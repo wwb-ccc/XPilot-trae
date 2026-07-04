@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XPilot - 智能电脑使用追踪与效率分析系统 | TRAE创意大赛</title>
+    <style>
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2D5C8E;
+            --primary-light: #4A8BC2;
+            --accent: #5BA3E6;
+            --bg: #FFFFFF;
+            --bg-alt: #F8F9FB;
+            --text: #2C3E50;
+            --text-secondary: #6B7C93;
+            --border: #E8ECF1;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --radius-lg: 20px;
+            --max-width: 1100px;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Noto Sans SC", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .container {
+            max-width: var(--max-width);
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* Header / Banner */
+        .banner {
+            background: linear-gradient(135deg, #1A365D 0%, #2D5C8E 50%, #4A8BC2 100%);
+            color: #fff;
+            padding: 64px 0 56px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(ellipse at 20% 50%, rgba(255,255,255,0.06) 0%, transparent 60%),
+                        radial-gradient(ellipse at 80% 50%, rgba(255,255,255,0.04) 0%, transparent 50%);
+        }
+        .banner_tag {
+            display: inline-block;
+            background: rgba(255,255,255,0.15);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.25);
+            border-radius: 999px;
+            padding: 4px 18px;
+            font-size: 13px;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        .banner h1 {
+            font-size: 38px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+        }
+        .banner h1 span {
+            color: #8BC4FF;
+        }
+        .banner .subtitle {
+            margin-top: 16px;
+            font-size: 17px;
+            opacity: 0.85;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .banner .competition-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 28px;
+            background: rgba(255,255,255,0.10);
+            border: 1px solid rgba(255,255,255,0.20);
+            border-radius: 999px;
+            padding: 8px 24px;
+            font-size: 14px;
+        }
+        .banner .competition-badge svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Section common */
+        .section {
+            padding: 56px 0;
+        }
+        .section-alt {
+            background: var(--bg-alt);
+        }
+        .section-title {
+            font-size: 28px;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 12px;
+        }
+        .section-desc {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 16px;
+            max-width: 640px;
+            margin: 0 auto 44px;
+        }
+
+        /* Intro */
+        .intro-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+        .intro-card {
+            background: var(--bg-alt);
+            border-radius: var(--radius);
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+        .intro-card h3 {
+            font-size: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .intro-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .intro-card ul {
+            list-style: none;
+            margin-top: 8px;
+        }
+        .intro-card ul li {
+            color: var(--text-secondary);
+            font-size: 15px;
+            padding: 6px 0;
+            padding-left: 22px;
+            position: relative;
+            line-height: 1.7;
+        }
+        .intro-card ul li::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 14px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            opacity: 0.6;
+        }
+
+        /* Screenshot placeholders */
+        .screenshot-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .screenshot-grid .main {
+            grid-column: 1 / -1;
+        }
+        .screenshot-placeholder {
+            background: #EFF2F6;
+            border-radius: var(--radius);
+            border: 1px dashed #C8D0DA;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 48px 24px;
+            color: #8A9BAE;
+            transition: background 0.2s, border-color 0.2s;
+            min-height: 200px;
+        }
+        .screenshot-placeholder:hover {
+            background: #EAEEF3;
+            border-color: #B0BECA;
+        }
+        .screenshot-placeholder.large {
+            min-height: 280px;
+        }
+        .screenshot-placeholder svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 14px;
+            opacity: 0.5;
+        }
+        .screenshot-placeholder .label {
+            font-size: 15px;
+            font-weight: 500;
+        }
+        .screenshot-placeholder .sublabel {
+            font-size: 13px;
+            margin-top: 4px;
+            opacity: 0.7;
+        }
+
+        /* Features */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .feature-item {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            border: 1px solid var(--border);
+            transition: box-shadow 0.25s, transform 0.25s;
+            text-align: center;
+        }
+        .feature-item:hover {
+            box-shadow: 0 8px 30px var(--shadow);
+            transform: translateY(-3px);
+        }
+        .feature-icon {
+            width: 56px;
+            height: 56px;
+            margin: 0 auto 18px;
+            background: #EBF2FA;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .feature-icon svg {
+            width: 28px;
+            height: 28px;
+            color: var(--primary);
+        }
+        .feature-item h4 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+        .feature-item p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* User section */
+        .user-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .user-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            border: 1px solid var(--border);
+            text-align: center;
+        }
+        .user-card .user-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            margin: 0 auto 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .user-card h4 {
+            font-size: 17px;
+            margin-bottom: 8px;
+        }
+        .user-card p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        /* Value */
+        .value-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+        }
+        .value-card {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 32px;
+            border: 1px solid var(--border);
+        }
+        .value-card h3 {
+            font-size: 20px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .value-card p {
+            color: var(--text-secondary);
+            font-size: 15px;
+            line-height: 1.8;
+        }
+
+        /* Pain points */
+        .pain-list {
+            display: grid;
+            gap: 16px;
+        }
+        .pain-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            background: #fff;
+            border-radius: 10px;
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+        }
+        .pain-item .pain-num {
+            flex-shrink: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .pain-item .pain-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            padding-top: 4px;
+        }
+
+        /* Achievement showcase */
+        .achievement-showcase {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 16px;
+            margin-top: 24px;
+        }
+        .achievement-badge {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px 12px;
+            border: 1px solid var(--border);
+            text-align: center;
+            transition: box-shadow 0.2s;
+        }
+        .achievement-badge:hover {
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+        .achievement-badge svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 8px;
+        }
+        .achievement-badge .ach-name {
+            font-size: 13px;
+            font-weight: 500;
+        }
+        .achievement-badge .ach-sub {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-top: 2px;
+            opacity: 0.7;
+        }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 32px 0;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        .footer strong {
+            color: var(--text);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .banner h1 { font-size: 30px; }
+            .intro-grid { grid-template-columns: 1fr; }
+            .features-grid { grid-template-columns: 1fr 1fr; }
+            .user-grid { grid-template-columns: 1fr 1fr; }
+            .value-grid { grid-template-columns: 1fr; }
+            .achievement-showcase { grid-template-columns: repeat(3, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .banner { padding: 40px 0 36px; }
+            .banner h1 { font-size: 24px; }
+            .section { padding: 36px 0; }
+            .section-title { font-size: 22px; }
+            .features-grid { grid-template-columns: 1fr; }
+            .user-grid { grid-template-columns: 1fr; }
+            .screenshot-grid { grid-template-columns: 1fr; }
+            .achievement-showcase { grid-template-columns: repeat(2, 1fr); }
+            .intro-card { padding: 24px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== Banner ===== -->
+<header class="banner">
+    <div class="container">
+        <div class="banner_tag">🏆 TRAE 创意大赛</div>
+        <h1>XPilot <span>—</span> 智能电脑使用追踪<br>与效率分析系统</h1>
+        <p class="subtitle">自动追踪 · 智能分类 · 趣味成就 · 数据可视化 —— 让每一分钟都有迹可循</p>
+        <div class="competition-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+            </svg>
+            <span>【学习工作赛道】</span>
+        </div>
+    </div>
+</header>
+
+<!-- ===== 1. 创意名称 + 创意介绍 ===== -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">创意介绍</h2>
+        <p class="section-desc">用数据取代感觉，让效率提升不再是空谈</p>
+        <div class="intro-grid">
+            <div class="intro-card">
+                <h3>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                    </svg>
+                    想解决什么问题
+                </h3>
+                <p>很多人不知道自己每天在电脑上花了多少时间在办公、摸鱼还是娱乐上，时间管理全靠感觉，效率提升无从下手。没有量化数据，一切改进都是盲人摸象。</p>
+            </div>
+            <div class="intro-card">
+                <h3>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                    </svg>
+                    为什么会想到做这个
+                </h3>
+                <p>看到很多朋友想提升效率但缺乏数据支撑，市面上的时间追踪工具要么太贵、要么太复杂、要么需要手动记录。需要一个<b>轻量级、自动化、本地化</b>的解决方案，真正实现"打开即用、零操作"。同时用成就系统和等级机制让时间管理变得有趣。</p>
+            </div>
+        </div>
+        <div style="margin-top:24px;">
+            <div class="intro-card" style="text-align:center;">
+                <h3 style="justify-content:center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 8h6"/><path d="M9 12h6"/><path d="M9 16h4"/>
+                    </svg>
+                    产品概览
+                </h3>
+                <p style="font-size:15px; max-width:480px; margin:0 auto;">
+                    <b>Windows 桌面端应用</b> · Wails 框架（Go + Vue3 + TypeScript）<br>
+                    后台静默运行 · 系统托盘常驻 · 自动追踪所有软件窗口 · 零手动操作
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 产品截图展示区 ===== -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">产品界面预览</h2>
+        <p class="section-desc">简洁直观的仪表盘，让数据一目了然</p>
+        <div class="screenshot-grid">
+            <div class="screenshot-placeholder large main">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                </svg>
+                <span class="label">主仪表盘 · 今日概览</span>
+                <span class="sublabel">饼图展示各类软件使用占比 &amp; 今日总时长 &amp; 活跃成就</span>
+            </div>
+            <div class="screenshot-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3v18h18"/><path d="M7 16l4-8 4 4 4-6"/>
+                </svg>
+                <span class="label">周趋势图</span>
+                <span class="sublabel">过去 7 天各类别使用时长趋势</span>
+            </div>
+            <div class="screenshot-placeholder">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 10-16 0"/>
+                </svg>
+                <span class="label">成就 &amp; 等级系统</span>
+                <span class="sublabel">100 个趣味成就 &amp; 技能等级进度</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 核心功能 ===== -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">核心功能</h2>
+        <p class="section-desc">四大模块覆盖从数据采集到激励闭环的全链路</p>
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                </div>
+                <h4>智能窗口追踪</h4>
+                <p>自动识别前台窗口标题与进程名，精准记录每一款软件的使用时长，完全无需手动操作。</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+                    </svg>
+                </div>
+                <h4>智能分类引擎</h4>
+                <p>将软件自动归类为 <b>办公 · 阅读 · 社交 · 游戏 · 其他</b> 五大类别，分门别类一目了然。</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                </div>
+                <h4>数据可视化</h4>
+                <p>饼图展示当日各类软件使用占比，周趋势图呈现一周变化，让时间分布一目了然。</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                </div>
+                <h4>成就 &amp; 等级系统</h4>
+                <p>100 个趣味成就，如「牛马上班」「要不然重启试试呢」。积累 XP 提升技能等级，让时间管理像游戏一样有趣。</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/>
+                    </svg>
+                </div>
+                <h4>桌面通知提醒</h4>
+                <p>解锁成就时，桌面右下角弹出精美通知，即时反馈，惊喜不断，全程零打扰。</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="2" width="20" height="20" rx="2"/><line x1="8" y1="2" x2="8" y2="22"/><line x1="16" y1="2" x2="16" y2="22"/>
+                    </svg>
+                </div>
+                <h4>系统托盘常驻</h4>
+                <p>关闭窗口后在系统托盘继续运行，后台持续追踪。真正做到「打开即忘」，数据自动累积。</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 2. 目标用户及痛点 ===== -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">目标用户 &amp; 痛点分析</h2>
+        <p class="section-desc">谁在用？为什么需要？解决什么痛点？</p>
+        <div class="user-grid">
+            <div class="user-card">
+                <div class="user-icon" style="background:#EBF2FA;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/>
+                    </svg>
+                </div>
+                <h4>上班族</h4>
+                <p>想要了解工作时间分配，发现自己在办公软件和摸鱼软件上的真实比例，量化自己的专注力。</p>
+            </div>
+            <div class="user-card">
+                <div class="user-icon" style="background:#F0F0F8;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                    </svg>
+                </div>
+                <h4>自由职业者</h4>
+                <p>自我管理全靠自律，需要客观数据辅助复盘每日工作效率，找到最佳工作节奏。</p>
+            </div>
+            <div class="user-card">
+                <div class="user-icon" style="background:#F5F0EB;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/>
+                    </svg>
+                </div>
+                <h4>学生 &amp; 更多</h4>
+                <p>想了解自己在学习工具和娱乐工具上的时间分配，培养良好的电脑使用习惯。</p>
+            </div>
+        </div>
+
+        <div style="margin-top:40px;">
+            <h3 style="font-size:20px; text-align:center; margin-bottom:20px;">当前痛点</h3>
+            <div class="pain-list">
+                <div class="pain-item">
+                    <div class="pain-num">1</div>
+                    <div class="pain-text"><b>缺乏数据</b> — 不知道自己时间花在哪，复盘全靠回忆和感觉，误差极大</div>
+                </div>
+                <div class="pain-item">
+                    <div class="pain-num">2</div>
+                    <div class="pain-text"><b>无从下手</b> — 想提升效率但缺少客观依据，不知道该从哪些方面改进</div>
+                </div>
+                <div class="pain-item">
+                    <div class="pain-num">3</div>
+                    <div class="pain-text"><b>工具门槛高</b> — 已有工具要么收费昂贵，要么需要手动记录，操作繁琐难以坚持</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 3. 价值与意义 ===== -->
+<section class="section">
+    <div class="container">
+        <h2 class="section-title">价值与意义</h2>
+        <p class="section-desc">让时间管理从「凭感觉」走向「靠数据」，从「痛苦坚持」变成「有趣游戏」</p>
+        <div class="value-grid">
+            <div class="value-card">
+                <h3>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+                    </svg>
+                    效率提升
+                </h3>
+                <p><b>自动追踪零操作</b> — 后台静默运行，无需任何手动记录，打开电脑即开始追踪。</p>
+                <p style="margin-top:10px;"><b>数据可视化一目了然</b> — 饼图、趋势图直观展示时间分布，帮助用户快速发现「时间黑洞」，精准定位效率瓶颈。</p>
+            </div>
+            <div class="value-card">
+                <h3>
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+                    </svg>
+                    趣味驱动
+                </p>
+                <p><b>成就系统</b> — 100 个精心设计的趣味成就（如「牛马上班」「要不然重启试试呢」），解锁瞬间桌面通知弹窗，惊喜感满满。</p>
+                <p style="margin-top:10px;"><b>技能等级</b> — 使用时长积累 XP，提升技能等级，让时间管理不再枯燥，而是像玩游戏一样充满动力。</p>
+            </div>
+        </div>
+
+        <!-- Achievement Showcase -->
+        <div style="margin-top:40px;">
+            <h3 style="font-size:18px; text-align:center; margin-bottom:4px;">🎯 趣味成就（100 个）</h3>
+            <p style="text-align:center; color:var(--text-secondary); font-size:14px; margin-bottom:16px;">部分成就预览</p>
+            <div class="achievement-showcase">
+                <div class="achievement-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2z"/>
+                    </svg>
+                    <div class="ach-name">牛马上班</div>
+                    <div class="ach-sub">早上 8:00 前打开办公软件</div>
+                </div>
+                <div class="achievement-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                    <div class="ach-name">要不然重启试试呢</div>
+                    <div class="ach-sub">一天内重启电脑 3 次</div>
+                </div>
+                <div class="achievement-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                    </svg>
+                    <div class="ach-name">社交达人</div>
+                    <div class="ach-sub">社交软件使用超过 4 小时</div>
+                </div>
+                <div class="achievement-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                    </svg>
+                    <div class="ach-name">阅读者</div>
+                    <div class="ach-sub">累计阅读类软件使用 100 小时</div>
+                </div>
+                <div class="achievement-badge">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+                    </svg>
+                    <div class="ach-name">深夜玩家</div>
+                    <div class="ach-sub">凌晨 0 点后仍在玩游戏</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== 4. TRAE 创意产物 ===== -->
+<section class="section section-alt">
+    <div class="container">
+        <h2 class="section-title">TRAE 生成的创意产物</h2>
+        <p class="section-desc">本页面由 TRAE 智能生成，展示 XPilot 的产品理念与核心设计</p>
+        <div class="intro-grid">
+            <div class="intro-card" style="text-align:center;">
+                <h3 style="justify-content:center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    创意产物说明
+                </h3>
+                <p style="font-size:15px;">
+                    本 HTML 文件为 TRAE 创意大赛参赛作品 <b>「XPilot - 智能电脑使用追踪与效率分析系统」</b> 的产品展示页面。<br><br>
+                    页面涵盖创意介绍、目标用户与痛点分析、核心功能展示、价值意义阐述等内容，<br>
+                    所有样式与内容集成于单一 HTML 文件中，<b>无需任何外部资源</b>即可在浏览器中直接打开浏览。
+                </p>
+            </div>
+            <div class="intro-card" style="text-align:center;">
+                <h3 style="justify-content:center;">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/>
+                    </svg>
+                    技术栈
+                </h3>
+                <div style="display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin-top:12px;">
+                    <span style="background:#EBF2FA; border-radius:999px; padding:4px 14px; font-size:13px; color:var(--primary);">Wails</span>
+                    <span style="background:#EBF2FA; border-radius:999px; padding:4px 14px; font-size:13px; color:var(--primary);">Go</span>
+                    <span style="background:#EBF2FA; border-radius:999px; padding:4px 14px; font-size:13px; color:var(--primary);">Vue3</span>
+                    <span style="background:#EBF2FA; border-radius:999px; padding:4px 14px; font-size:13px; color:var(--primary);">TypeScript</span>
+                    <span style="background:#EBF2FA; border-radius:999px; padding:4px 14px; font-size:13px; color:var(--primary);">Windows</span>
+                </div>
+                <p style="font-size:14px; color:var(--text-secondary); margin-top:16px;">
+                    桌面端应用 · 系统托盘常驻 · 后台自动追踪<br>
+                    全程离线运行，数据安全存储在本地
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- ===== Footer ===== -->
+<footer class="footer">
+    <div class="container">
+        <p><strong>TRAE 创意大赛 · 学习工作赛道</strong></p>
+        <p style="margin-top:4px;">XPilot — 智能电脑使用追踪与效率分析系统</p>
+        <p style="margin-top:4px; opacity:0.6;">本页面由 TRAE AI 编程助手生成 · 2026</p>
+    </div>
+</footer>
+
+</body>
+</html>
